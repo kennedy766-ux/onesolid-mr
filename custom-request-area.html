@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid - Custom Material Request</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <div>
+                        <h1 class="font-bold text-blue-900 leading-tight">OneSolid</h1>
+                        <p class="text-xs text-gray-400">Integrated Facility Services</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-1">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu</p>
+                <a href="request-form.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span>My Requests</span>
+                </a>
+                <a href="custom-request-area.html" class="flex items-center space-x-3 px-3 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium text-sm">
+                    <i class="fa-solid fa-cart-plus w-5"></i>
+                    <span>Custom Request</span>
+                </a>
+                <a href="history-pesanan.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-history w-5"></i>
+                    <span>History Pesanan</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" onclick="sessionStorage.clear()" class="flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    <span>Logout System</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-y-auto h-screen">
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shrink-0">
+                <div>
+                    <h2 class="text-sm text-gray-500">Material Request Lapangan</h2>
+                    <p class="font-semibold text-gray-800 text-base">Custom Product Request</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-gray-500">Area:</span>
+                    <span id="label-area-aktif" class="font-bold text-blue-900 ml-1">Loading...</span>
+                </div>
+            </header>
+
+            <div class="p-8 flex-1">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-fit">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-gray-100 pb-3 mb-4">🛒 Ajukan Barang Baru</h3>
+                        <form onsubmit="kirimCustomRequest(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Barang</label>
+                                <input type="text" id="custNama" placeholder="Contoh: Sapu Garpu Taman Super" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-900">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Jumlah (Qty)</label>
+                                    <input type="number" id="custQty" min="1" value="1" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-900">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Satuan Unit</label>
+                                    <input type="text" id="custUnit" placeholder="Pcs / Pack" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-900">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Link Referensi Gambar</label>
+                                <input type="text" id="custLink" placeholder="Sematkan URL gambar acuan (Drive / Tautan Foto)..." required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-900 text-blue-700 font-medium">
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition cursor-pointer">
+                                Kirim Pengajuan Custom
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-gray-100 bg-blue-900 text-white font-bold text-sm uppercase tracking-wide flex justify-between items-center">
+                            <span>📋 Status Pengajuan Barang Custom</span>
+                            <button onclick="muatStatusCustom()" class="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-xs transition cursor-pointer">Refresh ↻</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        <th class="py-4 px-6">Nama Barang</th>
+                                        <th class="py-4 px-6">Qty</th>
+                                        <th class="py-4 px-6">Referensi Gambar</th>
+                                        <th class="py-4 px-6 text-center">Status / Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel-status-custom-body" class="divide-y divide-gray-100 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let namaAreaAktif = sessionStorage.getItem("userArea") || "Polda Metro Jaya";
+        document.getElementById("label-area-aktif").innerText = namaAreaAktif;
+
+        async function muatStatusCustom() {
+            try {
+                const respon = await fetch('/api/custom-request');
+                const listRequest = await respon.json();
+                const tbody = document.getElementById('tabel-status-custom-body');
+                tbody.innerHTML = '';
+
+                const milikSaya = listRequest.filter(r => r.area.toLowerCase().trim() === namaAreaAktif.toLowerCase().trim());
+
+                if (milikSaya.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="py-6 px-6 text-center text-gray-400 italic">Belum ada pengajuan produk custom dari wilayah Anda.</td></tr>';
+                    return;
+                }
+
+                milikSaya.forEach(r => {
+                    let statusHtml = '';
+                    let tombolBatalHtml = '';
+
+                    if (r.status === "Pending") {
+                        statusHtml = `<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-semibold">Menunggu Review</span>`;
+                        // 🌟 INPUT SOLUSI 2: Menyediakan Tombol Batal bagi Lapangan
+                        tombolBatalHtml = `
+                            <button onclick="batalRequestLapangan('${r.idCustom}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-2 py-1 rounded ml-2 transition">
+                                <i class="fa-solid fa-trash-can"></i> Batal
+                            </button>
+                        `;
+                    } else if (r.status === "Approved") {
+                        statusHtml = `<span class="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">Disetujui</span>`;
+                    } else {
+                        statusHtml = `<span class="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">Ditolak</span>`;
+                    }
+
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-gray-50 border-b border-gray-100 transition";
+                    row.innerHTML = `
+                        <td class="py-4 px-6 font-bold text-gray-800">${r.namaBarang}</td>
+                        <td class="py-4 px-6 text-gray-600 font-medium">${r.qty} ${r.unit}</td>
+                        <td class="py-4 px-6">
+                            <a href="${r.linkReferensi}" target="_blank" class="text-blue-600 hover:underline font-bold text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-image"></i> Lihat Gambar ↗
+                            </a>
+                        </td>
+                        <td class="py-4 px-6 text-center flex items-center justify-center">${statusHtml} ${tombolBatalHtml}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) { console.log(error); }
+        }
+
+        async function batalRequestLapangan(idCustom) {
+            if (!confirm("Apakah Anda yakin ingin membatalkan pengajuan barang kustom ini?")) return;
+            try {
+                const respon = await fetch('/api/custom-request/hapus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idCustom })
+                });
+                const hasil = await respon.json();
+                alert(hasil.message);
+                muatStatusCustom();
+            } catch (err) { alert("Gagal terhubung ke server."); }
+        }
+
+        async function kirimCustomRequest(e) {
+            if(e) e.preventDefault();
+            const namaBarang = document.getElementById('custNama').value.trim();
+            const qty = document.getElementById('custQty').value;
+            const unit = document.getElementById('custUnit').value.trim();
+            const linkReferensi = document.getElementById('custLink').value.trim();
+
+            try {
+                const respon = await fetch('/api/custom-request/kirim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ area: namaAreaAktif, namaBarang, qty, unit, linkReferensi })
+                });
+                const hasil = await respon.json();
+
+                if (respon.ok) {
+                    alert(hasil.message);
+                    document.getElementById('custNama').value = '';
+                    document.getElementById('custUnit').value = '';
+                    document.getElementById('custLink').value = '';
+                    muatStatusCustom();
+                } else {
+                    alert(`Gagal: ${hasil.message}`);
+                }
+            } catch (error) { alert("Gagal terhubung ke server backend."); }
+        }
+
+        muatStatusCustom();
+    </script>
+</body>
+</html>

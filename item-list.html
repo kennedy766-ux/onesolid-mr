@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid - Item List</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <div>
+                        <h1 class="font-bold text-blue-900 leading-tight">OneSolid</h1>
+                        <p class="text-xs text-gray-400">Integrated Facility Services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu</p>
+                <a href="index.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span>My Requests</span>
+                </a>
+                <a href="item-list.html" class="flex items-center space-x-3 px-3 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium text-sm">
+                    <i class="fa-solid fa-boxes-stacked w-5"></i>
+                    <span>Item List</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-100">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col">
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8">
+                <div>
+                    <h2 class="text-sm text-gray-500">Welcome to Material Request</h2>
+                    <p class="font-semibold text-gray-800 text-base">Polda Metro Jaya (Contoh Area)</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm">
+                        PIC
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">PIC Area</span>
+                </div>
+            </header>
+
+            <div class="p-8 flex-1">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-linear-to-r from-orange-500 to-amber-500 text-white">
+                        <h3 class="font-bold text-lg uppercase tracking-wide">ITEM LIST - DAFTAR BARANG</h3>
+                        <button onclick="bukaModalRequest()" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition active:scale-95 cursor-pointer flex items-center space-x-1">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Req. Input Material</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-4 px-6">Nama Produk</th>
+                                    <th class="py-4 px-6">Unit</th>
+                                    <th class="py-4 px-6">Rekomendasi Link Pembelian</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-item-list" class="divide-y divide-gray-100 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalRequest" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full border border-gray-100 overflow-hidden transform transition-all">
+            <div class="p-6 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-gray-900 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-orange-500"></i>
+                    <span>Request New Material</span>
+                </h3>
+                <button onclick="tutupModalRequest()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="formRequest" onsubmit="simpanRequest(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Nama Produk</label>
+                    <input type="text" id="inputNama" required placeholder="Contoh: Sapu lidi / Hand Sanitizer" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Unit</label>
+                    <input type="text" id="inputUnit" required placeholder="Contoh: Pcs / Gallon / Pack" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Rekomendasi Link Pembelian</label>
+                    <input type="url" id="inputLink" placeholder="https://tokopedia.com/..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 bg-white">
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
+                    <button type="button" onclick="tutupModalRequest()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-semibold hover:bg-blue-800 shadow-sm transition cursor-pointer">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Produk yang Tersedia
+        const daftarBarang = [
+            { nama: "Floor Cleaner", unit: "Gallon" },
+            { nama: "Cleaning Powder", unit: "Pack" },
+            { nama: "Liquid Soap", unit: "Gallon" },
+            { nama: "Dishwashing Liquid", unit: "1 Liter" },
+            { nama: "Cleaning Cloth (Blue)", unit: "Pcs" },
+            { nama: "Plastic Bag 60X100", unit: "Pack" },
+            { nama: "Plastic Bag 90X120", unit: "Pack" }
+        ];
+
+        // Tampilkan ke tabel
+        const tbody = document.getElementById('tabel-item-list');
+        daftarBarang.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = "hover:bg-gray-50/50 transition";
+            row.innerHTML = `
+                <td class="py-4 px-6 font-medium text-gray-900">${item.nama}</td>
+                <td class="py-4 px-6 text-gray-500">${item.unit}</td>
+                <td class="py-4 px-6">
+                    <a href="#" class="text-blue-500 hover:underline inline-flex items-center space-x-1">
+                        <span>Link Tokped/Shopee</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Fungsi Membuka & Menutup Pop-up Formulir
+        function bukaModalRequest() {
+            document.getElementById('modalRequest').classList.remove('hidden');
+        }
+        function tutupModalRequest() {
+            document.getElementById('modalRequest').classList.add('hidden');
+            document.getElementById('formRequest').reset();
+        }
+
+        // Fungsi ketika form di-Submit
+        function simpanRequest(event) {
+            event.preventDefault(); // Mencegah halaman reload
+            const nama = document.getElementById('inputNama').value;
+            
+            // Simulasi alert sukses pengajuan
+            alert(`Berhasil mengajukan barang baru: "${nama}". Menunggu persetujuan dari pihak LOGISTIC.`);
+            tutupModalRequest();
+        }
+    </script>
+</body>
+</html>

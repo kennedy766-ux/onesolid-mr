@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid - Login Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100">
+        <div class="p-8 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-center">
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-orange-500 font-bold text-3xl mx-auto shadow-md mb-4">S</div>
+            <h2 class="text-xl font-bold uppercase tracking-wider">OneSolid Portal</h2>
+            <p class="text-xs text-orange-100 mt-1">Material Request & Procurement System</p>
+        </div>
+
+        <div class="p-8 space-y-6">
+            <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </span>
+                    <input type="text" id="username" placeholder="Masukkan username Anda" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </span>
+                    <input type="password" id="password" placeholder="••••••••" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition">
+                </div>
+            </div>
+
+            <button onclick="prosesValidasiLogin()" class="w-full py-3 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-slate-800 shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>MASUK KE SISTEM</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        async function prosesValidasiLogin() {
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+
+            try {
+                const respon = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userIn, password: passIn })
+                });
+                const hasil = await respon.json();
+
+                if (hasil.success) {
+                    // 🌟 SIMPAN DATA USER YANG LOGIN KE MEMORI BROWSER
+                    sessionStorage.setItem("loggedUser", hasil.role);
+                    sessionStorage.setItem("userArea", hasil.area);
+
+                    alert(hasil.message);
+                    if (hasil.role === "logistik") {
+                        window.location.href = "logistic-budget.html";
+                    } else if (hasil.role === "pemesan") {
+                        window.location.href = "request-form.html";
+                    }
+                } else {
+                    alert("Username atau Password Salah!");
+                }
+            } catch (error) {
+                alert("Gagal terhubung ke server login! Pastikan terminal CMD Anda aktif.");
+            }
+        }
+    </script>
+</body>
+</html>

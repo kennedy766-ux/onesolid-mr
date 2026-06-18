@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid - History Pesanan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @media print {
+            aside, button, .no-print, .filter-section, header { 
+                display: none !important; 
+            }
+            main { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+            }
+            body { 
+                background-color: white; 
+                color: black;
+            }
+            .shadow-sm, .rounded-xl { 
+                border: none !important; 
+                box-shadow: none !important; 
+            }
+            
+            /* 🚫 KOLOM TOTAL ANGGARAN TERPOTONG DISEMBUNYIKAN SAAT PRINT */
+            .kolom-budget {
+                display: none !important;
+            }
+
+            #judul-print-area {
+                display: block !important;
+                font-size: 18px !important;
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+                margin-bottom: 25px !important;
+                border-bottom: 2px solid #000000 !important;
+                padding-bottom: 8px !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            th, td {
+                padding: 10px 8px !important;
+                border: 1px solid #000000 !important;
+            }
+        }
+        
+        #judul-print-area { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col no-print">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <div>
+                        <h1 class="font-bold text-blue-900 leading-tight">OneSolid</h1>
+                        <p class="text-xs text-gray-400">Integrated Facility Services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu</p>
+                <a href="request-form.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span>My Requests</span>
+                </a>
+                <a href="custom-request-area.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-cart-plus w-5"></i>
+                    <span>Custom Request</span>
+                </a>
+                <a href="history-pesanan.html" class="flex items-center space-x-3 px-3 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium text-sm">
+                    <i class="fa-solid fa-history w-5"></i>
+                    <span>History Pesanan</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" onclick="sessionStorage.clear()" class="flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    <span>Logout System</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-y-auto h-screen p-8">
+            
+            <div id="judul-print-area">
+                REKAP TRANS-HISTORY MATERIAL REQUEST — AREA: <span id="nama-area-tercetak">LOADING...</span> — (<span id="nama-bulan-tercetak">PERIODE BULAN</span>)
+            </div>
+
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shrink-0 mb-6 rounded-xl shadow-sm no-print">
+                <div>
+                    <h2 class="text-sm text-gray-500">History & Tracking Request</h2>
+                    <p id="area-pic-sekarang" class="font-semibold text-gray-800 text-base">Loading Area...</p>
+                </div>
+                <button onclick="window.print()" class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 shadow-sm cursor-pointer transition">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print History</span>
+                </button>
+            </header>
+
+            <div class="space-y-6">
+                
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 filter-section no-print">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-blue-50 rounded-lg text-blue-600">
+                            <i class="fa-solid fa-calendar-check text-base"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wide">Filter Periode Transaksi</h4>
+                            <p class="text-xs text-gray-400">Pilih bulan untuk melihat kembali riwayat pesanan material request area Anda</p>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full sm:w-56">
+                        <select id="dropdown-filter-bulan" onchange="gantiFilterBulan(this.value)" class="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 p-2.5 cursor-pointer appearance-none">
+                            <option value="SEMUA">📅 Tampilkan Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500 text-[10px]">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-bold text-sm uppercase tracking-wide flex justify-between items-center no-print">
+                        <span>📋 Log Riwayat Permintaan Material</span>
+                        <span id="badge-info-bulan" class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">Bulan: Juni</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <th class="py-4 px-6">ID Pesanan</th>
+        <th class="py-4 px-6">Waktu Pengiriman</th>
+        <th class="py-4 px-6">Rincian Barang & Qty</th>
+    </tr>
+</thead>
+                            <tbody id="tabel-history-body" class="divide-y divide-gray-100 text-xs text-gray-700">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const formatRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+        let namaAreaAktif = sessionStorage.getItem("userArea") || "Polda Metro Jaya";
+        let semuaLogPesananArea = [];
+        let bulanTerpilih = "06"; // Default langsung cari Juni
+
+        document.getElementById("area-pic-sekarang").innerText = namaAreaAktif;
+        document.getElementById("nama-area-tercetak").innerText = namaAreaAktif;
+
+        const namaBulanIndo = {
+            "01": "Januari", "02": "Februari", "03": "Maret", "04": "April",
+            "05": "Mei", "06": "Juni", "07": "Juli", "08": "Agustus",
+            "09": "September", "10": "Oktober", "11": "November", "12": "Desember"
+        };
+
+        async function ambilLogHistoryServer() {
+            try {
+                const respon = await fetch('/api/pesanan');
+                const semuaPesanan = await respon.json();
+                
+                semuaLogPesananArea = semuaPesanan.filter(p => p.area === namaAreaAktif);
+                semuaLogPesananArea.reverse();
+
+                document.getElementById('dropdown-filter-bulan').value = bulanTerpilih;
+                
+                updateVisualBadge();
+                renderTabelHistory();
+            } catch (error) {
+                console.error("Gagal memuat log history:", error);
+            }
+        }
+
+        function gantiFilterBulan(bulanBaru) {
+            bulanTerpilih = bulanBaru;
+            updateVisualBadge();
+            renderTabelHistory();
+        }
+
+        function updateVisualBadge() {
+            const teksBulan = bulanTerpilih === "SEMUA" ? "Semua Bulan" : namaBulanIndo[bulanTerpilih];
+            document.getElementById('badge-info-bulan').innerText = `Periode: ${teksBulan}`;
+            document.getElementById('nama-bulan-tercetak').innerText = bulanTerpilih === "SEMUA" ? "SEMUA PERIODE TRANSAKSI" : `BULAN ${teksBulan.toUpperCase()}`;
+        }
+
+       function renderTabelHistory() {
+    const tbody = document.getElementById('tabel-history-body');
+    tbody.innerHTML = '';
+
+    let dataTersaring = semuaLogPesananArea;
+
+    if (bulanTerpilih !== "SEMUA") {
+        dataTersaring = dataTersaring.filter(p => {
+            if (!p.waktu) return false;
+
+            let bagianBulan = "";
+
+            if (p.waktu.includes('/') || p.waktu.includes('-')) {
+                let pemisah = p.waktu.includes('/') ? '/' : '-';
+                let pecah = p.waktu.split(pemisah);
+
+                if (pecah[0].length === 4) {
+                    bagianBulan = pecah[1];
+                } else {
+                    bagianBulan = pecah[1];
+                }
+            } else {
+                const d = new Date(p.waktu);
+                if (!isNaN(d.getTime())) {
+                    bagianBulan = String(d.getMonth() + 1);
+                }
+            }
+
+            if (!bagianBulan) return false;
+
+            return parseInt(bagianBulan, 10) === parseInt(bulanTerpilih, 10);
+        });
+    }
+
+    if (dataTersaring.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="py-8 px-6 text-center text-gray-400 italic">
+                    Tidak ditemukan riwayat pemesanan Material Request pada periode bulan ini.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    dataTersaring.forEach(pesanan => {
+        let listBarangHtml = '<ul class="list-disc list-inside space-y-1 text-gray-600 font-medium">';
+
+        pesanan.item.forEach(itm => {
+            listBarangHtml += `
+                <li>
+                    <span class="font-bold text-gray-800">${itm.nama}</span>
+                    —
+                    <span class="text-blue-600 font-bold">${itm.qty} ${itm.unit}</span>
+                </li>
+            `;
+        });
+
+        listBarangHtml += '</ul>';
+
+        const row = document.createElement('tr');
+        row.className = "hover:bg-gray-50/50 transition border-b border-gray-100";
+
+        row.innerHTML = `
+            <td class="py-4 px-6 font-mono font-bold text-blue-900">${pesanan.idPesanan}</td>
+            <td class="py-4 px-6 font-medium text-gray-400">${pesanan.waktu}</td>
+            <td class="py-4 px-6">${listBarangHtml}</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+        ambilLogHistoryServer();
+    </script>
+</body>
+</html>

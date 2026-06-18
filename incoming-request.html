@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid Logistic - Incoming Request</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            /* 🌟 KUNCI FIX: Menyembunyikan sidebar, header, tombol, kartu uang, dan kolom harga saat diprint */
+            aside, header, button, select, .no-print, .kartu-keuangan, .kolom-harga {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            .print-area {
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+            }
+            table {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <div>
+                        <h1 class="font-bold text-white leading-tight">OneSolid</h1>
+                        <p class="text-xs text-slate-400">Integrated Facility Services</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-1">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">Menu</p>
+                <a href="logistic-budget.html" class="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-layer-group w-5"></i>
+                    <span>Logistic Dashboard</span>
+                </a>
+                <a href="master-barang.html" class="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-box w-5"></i>
+                    <span>Master Barang</span>
+                </a>
+                <a href="management-user.html" class="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-users-gear w-5"></i>
+                    <span>User Management</span>
+                </a>
+                <a href="custom-request-logistik.html" class="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-code-pull-request w-5"></i>
+                    <span>Review Custom Request</span>
+                </a>
+                <a href="incoming-request.html" class="flex items-center space-x-3 px-3 py-2.5 bg-slate-800 text-orange-400 rounded-lg font-medium text-sm">
+                    <i class="fa-solid fa-download w-5"></i>
+                    <span>Incoming Request</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-800">
+                <a href="login.html" class="flex items-center space-x-3 px-3 py-2.5 text-red-400 hover:bg-red-950/30 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    <span>Logout Admin</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 min-h-screen bg-gray-100 p-8 flex flex-col">
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shrink-0 mb-6 rounded-xl shadow-sm">
+                <div>
+                    <h2 class="text-sm text-gray-500">Logistic Portal</h2>
+                    <p class="font-semibold text-gray-800 text-base">Incoming Material Requests (Regular & Custom)</p>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="relative w-56">
+                        <select id="pilih-filter-area" onchange="perbaruiMetrikKeuangan()" class="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-slate-950 appearance-none cursor-pointer shadow-sm">
+                            <option value="SEMUA">📊 Semua Area Gabungan</option>
+                        </select>
+                    </div>
+                    <button onclick="cetakLaporanKebutuhan()" class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2.5 rounded-lg text-xs font-bold flex items-center space-x-2 shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak Dokumen</span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="print-header-title" class="hidden print:block text-center mb-6 border-b-2 border-slate-900 pb-3">
+                <h1 class="text-xl font-bold uppercase tracking-wide">OneSolid - Integrated Facility Services</h1>
+                <p class="text-xs text-gray-500">Formulir Bukti Permintaan Barang Logistik Pusat (Incoming MR)</p>
+                <p id="print-area-sub" class="text-sm font-bold mt-1 text-blue-900">Filter: Semua Area</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 shrink-0 kartu-keuangan">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Budget Bulan Ini</p>
+                        <h3 id="stat-total-budget" class="text-xl font-bold text-slate-900 mt-1">Rp 0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl no-print">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pembelian Bulan Ini</p>
+                        <h3 id="stat-total-pengeluaran" class="text-xl font-bold text-orange-600 mt-1">Rp 0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl no-print">
+                        <i class="fa-solid fa-cart-arrow-down"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Sisa Budget Bulan Ini</p>
+                        <h3 id="stat-total-sisa" class="text-xl font-bold text-emerald-600 mt-1">Rp 0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl no-print">
+                        <i class="fa-solid fa-money-bill-trend-up"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-8 flex-1 print-area">
+                <div class="p-4 border-b border-gray-100 bg-slate-800 text-white font-bold text-sm uppercase flex justify-between items-center no-print">
+                    <span>📦 Daftar Pesanan Masuk Siap Proses Pengiriman</span>
+                    <button onclick="muatIncomingRequests()" class="bg-white/20 hover:bg-white/30 px-3 py-1 rounded text-xs transition cursor-pointer">Refresh ↻</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="py-4 px-6">ID Permintaan</th>
+                                <th class="py-4 px-6">Asal Area</th>
+                                <th class="py-4 px-6">Waktu Masuk</th>
+                                <th class="py-4 px-6">Rincian Item Barang</th>
+                                <th class="py-4 px-6 kolom-harga">Total Nilai</th>
+                                <th class="py-4 px-6 text-center no-print">Aksi Kerja</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-incoming-body" class="divide-y divide-gray-100 text-xs text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="hidden print:grid grid-cols-2 gap-12 text-center mt-12 text-xs font-bold">
+                <div>
+                    <p>Diserahkan Oleh,</p>
+                    <div class="h-16"></div>
+                    <p class="border-b border-gray-400 w-48 mx-auto"></p>
+                    <p class="text-gray-400 font-normal">Tim Logistik Pusat</p>
+                </div>
+                <div>
+                    <p>Diterima / Diambil Oleh,</p>
+                    <div class="h-16"></div>
+                    <p class="border-b border-gray-400 w-48 mx-auto"></p>
+                    <p id="print-nama-penerima" class="text-gray-400 font-normal">Perwakilan Area</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const formatRupiah = (angka) => {
+            const nilaiParsial = parseInt(angka);
+            if (isNaN(nilaiParsial)) return "Rp 0";
+            return "Rp " + nilaiParsial.toLocaleString('id-ID');
+        };
+
+        let dataGlobalPesanan = [];
+        let dataGlobalBudget = {};
+
+        async function muatDropdownArea() {
+            try {
+                const respon = await fetch('/api/users');
+                const listUser = await respon.json();
+                const dropdown = document.getElementById('pilih-filter-area');
+                dropdown.length = 1;
+                
+                listUser.forEach(user => {
+                    if (user.area) {
+                        const opsi = document.createElement('option');
+                        opsi.value = user.area;
+                        opsi.innerText = `🏢 ${user.area}`;
+                        dropdown.appendChild(opsi);
+                    }
+                });
+            } catch (err) { console.error("Gagal memuat list area:", err); }
+        }
+
+        async function perbaruiMetrikKeuangan() {
+            const areaTerpilih = document.getElementById('pilih-filter-area').value;
+            let sisaBudgetSistem = 0;
+            let pembelianBulanIni = 0;
+
+            if (areaTerpilih === "SEMUA") {
+                if (dataGlobalBudget && typeof dataGlobalBudget === 'object') {
+                    Object.values(dataGlobalBudget).forEach(nilai => { 
+                        const angkaMurni = parseInt(nilai);
+                        if (!isNaN(angkaMurni)) sisaBudgetSistem += angkaMurni;
+                    });
+                }
+                document.getElementById('print-area-sub').innerText = "Filter: Semua Wilayah Gabungan";
+                document.getElementById('print-nama-penerima').innerText = "Perwakilan Area";
+            } else {
+                sisaBudgetSistem = parseInt(dataGlobalBudget[areaTerpilih]) || 0;
+                document.getElementById('print-area-sub').innerText = `Filter Area: ${areaTerpilih}`;
+                document.getElementById('print-nama-penerima').innerText = `PIC Area ${areaTerpilih}`;
+            }
+
+            if (Array.isArray(dataGlobalPesanan)) {
+                dataGlobalPesanan.forEach(p => {
+                    if (areaTerpilih === "SEMUA" || p.area === areaTerpilih) {
+                        const biayaMurni = parseInt(p.totalBiaya);
+                        if (!isNaN(biayaMurni)) pembelianBulanIni += biayaMurni;
+                    }
+                });
+            }
+
+            let budgetBulanIni = sisaBudgetSistem + pembelianBulanIni;
+
+            document.getElementById('stat-total-budget').innerText = formatRupiah(budgetBulanIni);
+            document.getElementById('stat-total-pengeluaran').innerText = formatRupiah(pembelianBulanIni);
+            document.getElementById('stat-total-sisa').innerText = formatRupiah(sisaBudgetSistem);
+            
+            renderKontenTabel(areaTerpilih);
+        }
+
+        async function muatIncomingRequests() {
+            try {
+                const responPesanan = await fetch('/api/pesanan');
+                dataGlobalPesanan = await responPesanan.json();
+                const responBudget = await fetch('/api/budget');
+                dataGlobalBudget = await responBudget.json();
+                perbaruiMetrikKeuangan();
+            } catch (err) { console.error("Gagal memuat incoming request:", err); }
+        }
+
+        function renderKontenTabel(filterArea) {
+            const tbody = document.getElementById('tabel-incoming-body');
+            tbody.innerHTML = '';
+
+            let dataTersaring = dataGlobalPesanan.filter(p => filterArea === "SEMUA" || p.area === filterArea);
+
+            if (dataTersaring.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="py-8 px-6 text-center text-gray-400 italic">Antrean incoming kosong. Tidak ada material request aktif untuk kriteria ini.</td></tr>';
+                return;
+            }
+
+            dataTersaring.forEach(p => {
+                let rincianBarangHtml = '<ul class="list-none space-y-1 bg-gray-50 p-2 rounded-lg border border-gray-200/60">';
+                p.item.forEach(itm => {
+                    rincianBarangHtml += `<li class="font-medium text-gray-700 py-0.5">🔹 <span class="font-bold">${itm.nama}</span> <span class="text-blue-600 font-bold">(${itm.qty} ${itm.unit || 'Pcs'})</span></li>`;
+                });
+                rincianBarangHtml += '</ul>';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50/50 border-b border-gray-100 transition";
+                
+                // 🌟 FIX: Menambahkan class 'kolom-harga' pada tag <td> total nilai nominal uang agar ikut tersembunyi sewaktu cetak
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-mono font-bold text-slate-600">${p.idPesanan}</td>
+                    <td class="py-4 px-6 font-bold text-blue-900 uppercase">${p.area}</td>
+                    <td class="py-4 px-6 text-gray-500">${p.waktu}</td>
+                    <td class="py-4 px-6 min-w-[280px]">${rincianBarangHtml}</td>
+                    <td class="py-4 px-6 font-bold text-emerald-700 font-mono text-sm kolom-harga">${formatRupiah(p.totalBiaya)}</td>
+                    <td class="py-4 px-6 text-center no-print">
+                        <button onclick="batalkanDanRefund('${p.idPesanan}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded shadow-sm transition cursor-pointer text-[11px]">
+                            <i class="fa-solid fa-ban"></i> Batal & Refund
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function batalkanDanRefund(idPesanan) {
+            if (!confirm(`Apakah Anda yakin ingin membatalkan nomor permintaan ${idPesanan}?\n\nSistem akan otomatis menghapus transaksi dan mengembalikan saldo budget.`)) return;
+
+            try {
+                const respon = await fetch('/api/pesanan/batal-refund', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idPesanan })
+                });
+                if (respon.ok) {
+                    alert("Sukses membatalkan transaksi dan me-refund dana area.");
+                    muatIncomingRequests();
+                }
+            } catch (err) { alert("Gagal terhubung ke server."); }
+        }
+
+        function cetakLaporanKebutuhan() {
+            window.print();
+        }
+
+        async function init() {
+            await muatDropdownArea();
+            await muatIncomingRequests();
+        }
+        init();
+    </script>
+</body>
+</html>

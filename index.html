@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSolid - Material Request</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <div>
+                        <h1 class="font-bold text-blue-900 leading-tight">OneSolid</h1>
+                        <p class="text-xs text-gray-400">Integrated Facility Services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu</p>
+                <a href="index.html" class="flex items-center space-x-3 px-3 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium text-sm">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span>My Requests</span>
+                </a>
+                <a href="item-list.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-boxes-stacked w-5"></i>
+                    <span>Item List</span>
+                </a>
+                <a href="report-print.html" class="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-100">
+                <a href="logistic-budget.html" class="flex items-center space-x-3 px-3 py-2.5 text-slate-600 hover:bg-slate-50 rounded-lg font-medium text-sm transition">
+                    <i class="fa-solid fa-sliders w-5"></i>
+                    <span>Switch to Logistic</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col">
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8">
+                <div>
+                    <h2 class="text-sm text-gray-500">Welcome to Material Request</h2>
+                    <p class="font-semibold text-gray-800 text-base">Polda Metro Jaya</p>
+                </div>
+                <div class="bg-orange-50 border border-orange-200 px-4 py-1.5 rounded-lg text-right">
+                    <span class="text-[10px] text-orange-600 block uppercase font-bold tracking-wide">Sisa Plafon Area</span>
+                    <span id="display-budget-pic" class="text-sm font-bold text-slate-800">Memuat...</span>
+                </div>
+            </header>
+
+            <div class="p-8 flex-1">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-linear-to-r from-orange-500 to-amber-500 text-white">
+                        <h3 class="font-bold text-lg uppercase tracking-wide">MY REQUEST - FORMULIR BULANAN</h3>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-xs">Periode: Januari 2025</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-4 px-6">Nama Produk</th>
+                                    <th class="py-4 px-6">Unit</th>
+                                    <th class="py-4 px-6">Estimasi Harga</th>
+                                    <th class="py-4 px-6 text-center w-40">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-barang-pic" class="divide-y divide-gray-100 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end">
+                        <button onclick="bukaKonfirmasi()" class="bg-blue-900 text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm hover:bg-blue-800 transition active:scale-95 cursor-pointer">
+                            CHECK & PESAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalPeringatan" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full text-center p-6 border border-gray-100">
+            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wide mb-2">Peringatan</h3>
+            <p class="text-sm text-gray-600 font-medium mb-6">PERMINTAAN BARANG TERLALU BANYAK (MELEBIHI BUDGET AREA)</p>
+            <button onclick="tutupPeringatan()" class="w-full py-2.5 bg-orange-500 text-white rounded-lg font-bold text-sm hover:bg-orange-600 cursor-pointer shadow-md">OK</button>
+        </div>
+    </div>
+
+    <div id="modalKonfirmasi" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full border border-gray-100 overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-3xl mx-auto mb-4">
+                    <i class="fa-regular fa-circle-question"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Pesanan</h3>
+                <p class="text-sm text-gray-500">Apakah Material Request Polda Metro Jaya <span class="font-semibold text-gray-800">"JANUARI 2025"</span> sudah sesuai?</p>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex space-x-3 justify-end border-t border-gray-100">
+                <button onclick="tutupKonfirmasi()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Cancel</button>
+                <button onclick="prosesSukses()" class="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-semibold hover:bg-blue-800 cursor-pointer">OK</button>
+            </div>
+        </div>
+    </div>
